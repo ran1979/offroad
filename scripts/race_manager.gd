@@ -88,7 +88,7 @@ func _update_hud() -> void:
 		info = "BEST LAP " + (fmt_time(best_lap) if best_lap < INF else "--")
 	else:
 		info = "POS %d/%d" % [position_of(player), cars.size()]
-	hud.update_hud(player.linear_velocity.length() * 3.6, player.nitro, "LAP %d/%d" % [lap, TOTAL_LAPS], time_text, info)
+	hud.update_hud(player.linear_velocity.length() * 3.6, player.nitro, "LAP %d/%d" % [lap, TOTAL_LAPS], time_text, info, player.power)
 
 
 func on_checkpoint(body: Node3D, i: int) -> void:

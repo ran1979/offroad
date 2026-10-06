@@ -15,6 +15,12 @@ extends VehicleBody3D
 const NITRO_MULT := 1.5
 const NITRO_DRAIN := 30.0  # % per second
 const NITRO_REGEN := 8.0   # % per second while fast or drifting
+const SPEED_POWER_TIME := 2.5
+const POWER_SOUNDS := {
+	"pickup": preload("res://audio/pickup.wav"),
+	"fire": preload("res://audio/fire.wav"),
+	"speed": preload("res://audio/speed.wav"),
+}
 
 var is_player := true
 var controls_enabled := false
@@ -23,6 +29,11 @@ var throttle_input := 0.0
 var brake_input := 0.0
 var nitro_input := false
 var nitro := 100.0
+var power_input := false  # use held power this frame
+var power := ""  # "", or one of Powers.KINDS
+var powers_used := 0
+var _boost_time := 0.0  # "speed" power remaining
+var _stun_time := 0.0  # spinning out after a hit
 var respawn_transform: Transform3D
 
 # Race state, owned by race_manager.gd
@@ -37,6 +48,7 @@ var _stuck_time := 0.0
 @onready var engine_sound: AudioStreamPlayer3D = $EngineSound
 @onready var nitro_sound: AudioStreamPlayer3D = $NitroSound
 @onready var skid_sound: AudioStreamPlayer3D = $SkidSound
+@onready var power_sound: AudioStreamPlayer3D = $PowerSound
 
 
 func _ready() -> void:
@@ -45,8 +57,9 @@ func _ready() -> void:
 		w.damping_compression = suspension_damping
 		w.damping_relaxation = suspension_damping * 1.3
 		w.wheel_friction_slip = friction_slip * (1.0 if w.use_as_steering else 0.9)
-	if not freeze:  # showroom cars stay silent
+	if not freeze:  # showroom cars stay silent and out of play
 		engine_sound.play()
+		add_to_group("cars")
 
 
 func apply_data(d: CarData, tint := d.color) -> void:
@@ -69,6 +82,18 @@ func _physics_process(delta: float) -> void:
 		throttle_input = Input.get_action_strength("accelerate")
 		brake_input = Input.get_action_strength("brake")
 		nitro_input = Input.is_action_pressed("nitro")
+		power_input = Input.is_action_just_pressed("use_power")
+	if controls_enabled and power_input and power != "":
+		_use_power()
+	_boost_time = maxf(_boost_time - delta, 0.0)
+	if _boost_time > 0.0:
+		throttle_input = 1.0
+	if _stun_time > 0.0:  # spinning out: no control
+		_stun_time -= delta
+		steer_input = 0.0
+		throttle_input = 0.0
+		brake_input = 0.0
+		nitro_input = false
 	if not controls_enabled:
 		steer_input = 0.0
 		throttle_input = 0.0
@@ -79,8 +104,11 @@ func _physics_process(delta: float) -> void:
 	var fwd_speed := linear_velocity.dot(global_basis.z)
 	var drift := absf(linear_velocity.dot(global_basis.x))
 	var grounded := is_grounded()
-	var boosting := nitro_input and nitro > 0.0 and throttle_input > 0.0
-	var mult := NITRO_MULT if boosting else 1.0
+	var nitro_on := nitro_input and nitro > 0.0 and throttle_input > 0.0
+	var boosting := nitro_on or _boost_time > 0.0
+	var mult := NITRO_MULT if nitro_on else 1.0
+	if _boost_time > 0.0:
+		mult = 1.7
 
 	# Steering: less lock at speed.
 	var steer_target := steer_input * max_steer_angle * lerpf(1.0, 0.5, clampf(speed / top_speed, 0.0, 1.0))
@@ -97,7 +125,7 @@ func _physics_process(delta: float) -> void:
 			engine_force = -brake_input * max_engine_force * 0.6  # reverse
 
 	# Nitro gauge
-	if boosting:
+	if nitro_on:
 		nitro = maxf(nitro - NITRO_DRAIN * delta, 0.0)
 	elif grounded and (speed > top_speed * 0.7 or drift > 4.0):
 		nitro = minf(nitro + NITRO_REGEN * delta, 100.0)
@@ -125,6 +153,52 @@ func _physics_process(delta: float) -> void:
 		respawn()
 
 
+## Called by pickups. Returns false if already holding a power.
+func give_power() -> bool:
+	if power != "":
+		return false
+	power = Powers.KINDS.pick_random()
+	_play_power_sound("pickup")
+	return true
+
+
+## Knocked by a fireball or boom: `push` is a velocity change (m/s).
+func hit(push: Vector3) -> void:
+	apply_central_impulse(push * mass)
+	apply_torque_impulse(Vector3.UP * (8.0 if randf() < 0.5 else -8.0) * mass)
+	_stun_time = 1.2
+
+
+func _use_power() -> void:
+	match power:
+		"speed":
+			_boost_time = SPEED_POWER_TIME
+			apply_central_impulse(global_basis.z * 5.0 * mass)
+			_play_power_sound("speed")
+		"fire":
+			var fb := Powers.Fireball.new()
+			fb.shooter = self
+			fb.velocity = global_basis.z * (maxf(linear_velocity.dot(global_basis.z), 0.0) + 40.0)
+			fb.position = global_position + global_basis.z * 3.0 + Vector3.UP
+			get_parent().add_child(fb)
+			_play_power_sound("fire")
+		"boom":
+			const RADIUS := 14.0
+			for c in get_tree().get_nodes_in_group("cars"):
+				var away: Vector3 = c.global_position - global_position
+				if c != self and away.length() < RADIUS:
+					var falloff := 1.0 - away.length() / RADIUS * 0.5
+					c.hit((Vector3(away.x, 0, away.z).normalized() * 10.0 + Vector3.UP * 7.0) * falloff)
+			Powers.flash(get_parent(), global_position + Vector3.UP, Powers.COLORS.boom, RADIUS)
+	power = ""
+	powers_used += 1
+
+
+func _play_power_sound(key: String) -> void:
+	power_sound.stream = POWER_SOUNDS[key]
+	power_sound.play()
+
+
 func _set_loop(player: AudioStreamPlayer3D, on: bool) -> void:
 	if player.playing != on:
 		player.playing = on
@@ -135,3 +209,4 @@ func respawn() -> void:
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 	_stuck_time = 0.0
+	_stun_time = 0.0

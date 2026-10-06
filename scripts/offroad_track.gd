@@ -12,6 +12,8 @@ const WAYPOINTS: Array[Vector3] = [
 ## [segment, fraction along it, angle in degrees]; each sits on a long straight so jumps land clear of corners.
 const RAMPS := [[0, 0.7, 8.0], [1, 0.3, 11.0], [6, 0.25, 11.0]]
 const RAMP_SIZE := Vector3(9, 0.6, 9)
+## Segments that get a row of three power-up boxes at their midpoint (kept clear of ramps).
+const PICKUP_SEGMENTS := [2, 4, 8, 10, 12]
 
 @onready var race_manager := $RaceManager
 
@@ -22,6 +24,12 @@ func _ready() -> void:
 		_add_ramp(r[0], r[1], r[2])
 	for i in WAYPOINTS.size():
 		_add_checkpoint(i)
+	for seg in PICKUP_SEGMENTS:
+		var d := dir_out(seg)
+		for lane in [-4.5, 0.0, 4.5]:
+			var box := Powers.Pickup.new()
+			box.position = WAYPOINTS[seg].lerp(WAYPOINTS[(seg + 1) % WAYPOINTS.size()], 0.5) + Vector3(-d.z, 0, d.x) * lane
+			add_child(box)
 	race_manager.setup(self)
 
 

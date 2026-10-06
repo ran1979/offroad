@@ -43,7 +43,8 @@ You can also open `project.godot` in the Godot editor and press **F5**.
 | Steer | ← → / A D | ◀ ▶ pads (bottom left) |
 | Accelerate | ↑ / W | GAS (bottom right) |
 | Brake / Reverse | ↓ / S | BRAKE |
-| Nitro | Space / Shift | NITRO |
+| Nitro | Space | NITRO |
+| Use power-up | Shift / E | POWER |
 | Back to menu | Esc | Android back button |
 
 The touch pads also respond to the mouse, so you can try them on desktop.
@@ -54,6 +55,18 @@ The touch pads also respond to the mouse, so you can try them on desktop.
 - **In the air**, gas tips the nose down, brake lifts it, and steering rolls the car, so you can line up your landings.
 - **Checkpoints** sit at every corner and must be hit in order, so shortcuts don't count.
 - **Auto-reset**: if you flip, get stuck, or leave the track for a couple of seconds, you respawn at your last checkpoint.
+
+### Power-ups
+
+Glowing yellow boxes stand in rows across the road on five straights. Driving through one gives you a random power-up, if you aren't already holding one. The HUD shows what you have. Press **Shift** (or **E**, or the POWER pad) to use it. A box comes back 5 seconds after it's taken. AI drivers collect and use power-ups too.
+
+| Power | Effect |
+|-------|--------|
+| **FIRE** | Shoots a fireball forward that steers toward the nearest car ahead. On impact it explodes and spins that car out. |
+| **BOOM** | A shockwave around you that throws every car within 14 m into the air. |
+| **SPEED** | A 2.5-second surge: a forward kick, 1.7× power and top speed, and full throttle. |
+
+A car that gets hit loses control for about a second. If it flips, the normal auto-reset puts it back on the track.
 
 ### Cars
 
@@ -68,6 +81,7 @@ The touch pads also respond to the mouse, so you can try them on desktop.
 - **Engine** pitch rises with speed and jumps when you press gas.
 - **Nitro** makes a turbo whoosh while it's active.
 - **Tyres** squeal when you brake hard or drift.
+- **Power-ups** each have their own sound: a chime on pickup, a roar for FIRE, an explosion for BOOM and a rising sweep for SPEED.
 - **Fanfare** plays when you finish. If time runs out, it plays at a lower pitch.
 
 All sounds are synthesized by `tools/gen_audio.py` using only the Python standard library. Rerun `python3 tools/gen_audio.py` to regenerate them. Looping is turned on in each sound's `audio/*.wav.import` file (`edit/loop_mode=2`).
@@ -80,7 +94,8 @@ The game uses Godot's built-in physics: `VehicleBody3D` with four driven `Vehicl
 autoloads/global.gd        Singleton: car roster, selected car, race mode, back-button handling
 resources/car_data.gd      CarData resource: id, name, mesh scene, stats (0..1), colour
 scripts/car_base.gd        Vehicle physics: engine/brake/steer, nitro, air control, dust/flame, respawn
-scripts/ai_car.gd          AI driver node, added to opponent cars; steers to the next required checkpoint
+scripts/ai_car.gd          AI driver node, added to opponent cars; steers to the next required checkpoint, fires power-ups
+scripts/powers.gd          Power-ups: pickup box, homing fireball, explosion flash
 scripts/race_manager.gd    Spawning, countdown, checkpoint/lap validation, positions, results
 scripts/offroad_track.gd   Builds road mesh, walls, ramps and checkpoint areas from WAYPOINTS
 scripts/chase_camera.gd    Smooth follow camera with a speed-based field-of-view kick
@@ -103,7 +118,7 @@ tests/smoke_test.tscn            Headless smoke test
 - Renderer: **Mobile**
 - Base resolution 1280×720, stretch mode `canvas_items` with aspect `expand`, so wide phones (19.5:9 and similar) get extra width while the UI stays anchored to the corners
 - Orientation: sensor landscape
-- Input actions: `steer_left`, `steer_right`, `accelerate`, `brake`, `nitro`
+- Input actions: `steer_left`, `steer_right`, `accelerate`, `brake`, `nitro`, `use_power`
 
 ### Tuning
 
@@ -113,6 +128,8 @@ tests/smoke_test.tscn            Headless smoke test
 | Stat → physics mapping | `apply_data()` in `scripts/car_base.gd` |
 | Base physics (suspension, air control, nitro rates) | exports and constants at the top of `scripts/car_base.gd` |
 | Track layout, width, ramps | `WAYPOINTS`, `WIDTH`, `RAMPS` in `scripts/offroad_track.gd` |
+| Power-up box positions | `PICKUP_SEGMENTS` in `scripts/offroad_track.gd` |
+| Power-up strength | `_use_power()` and `hit()` in `scripts/car_base.gd` |
 | Laps, time limit, AI colours | constants at the top of `scripts/race_manager.gd` |
 | AI speed and spread | `setup()` in `scripts/race_manager.gd` (`top_speed *= randf_range(...)`, `lane`) |
 
@@ -130,7 +147,8 @@ tests/smoke_test.tscn            Headless smoke test
 This runs an AI race at a fixed 60 fps with no window and checks that:
 
 - the player car passes 60 km/h when holding gas;
-- every AI car completes a lap within 60 seconds;
+- a BOOM fired at the start knocks at least one other car;
+- every AI car completes a lap within 60 seconds and uses at least one power-up;
 - a checkpoint hit out of order is ignored;
 - the final lap brings up the results screen.
 

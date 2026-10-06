@@ -32,6 +32,7 @@ func _physics_process(delta: float) -> void:
 	car.throttle_input = 0.4 if absf(angle) > 0.5 and speed > 15.0 else 1.0
 	car.brake_input = 1.0 if absf(angle) > 0.9 and speed > 18.0 else 0.0
 	car.nitro_input = absf(angle) < 0.15 and car.nitro > 40.0
+	car.power_input = _want_power(absf(angle))
 
 	# Wedged against a wall: back out with opposite lock.
 	_slow_time = _slow_time + delta if car.controls_enabled and speed < 1.5 else 0.0
@@ -43,3 +44,19 @@ func _physics_process(delta: float) -> void:
 		car.steer_input = -car.steer_input
 		car.throttle_input = 0.0
 		car.brake_input = 1.0
+
+
+func _want_power(abs_angle: float) -> bool:
+	match car.power:
+		"speed":
+			return abs_angle < 0.1
+		"fire", "boom":
+			for c in get_tree().get_nodes_in_group("cars"):
+				if c == car:
+					continue
+				var local: Vector3 = car.global_basis.inverse() * (c.global_position - car.global_position)
+				if car.power == "boom" and local.length() < 9.0:
+					return true
+				if car.power == "fire" and local.z > 5.0 and local.z < 45.0 and absf(local.x) < 5.0:
+					return true
+	return false

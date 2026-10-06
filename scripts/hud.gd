@@ -12,6 +12,7 @@ var _map_offset := Vector2.ZERO
 @onready var info_label: Label = $Root/Info/Extra
 @onready var speed_label: Label = $Root/Speed
 @onready var nitro_bar: ProgressBar = $Root/Nitro
+@onready var power_label: Label = $Root/Power
 @onready var center_label: Label = $Root/Center
 @onready var minimap: Control = $Root/Minimap
 @onready var results: Control = $Root/Results
@@ -38,7 +39,9 @@ func setup(points: Array, all_cars: Array, player_car: Node3D) -> void:
 	_map_offset = minimap.size / 2.0 - (lo + hi) / 2.0 * _map_scale
 
 
-func update_hud(speed_kmh: float, nitro: float, lap: String, time: String, info: String) -> void:
+func update_hud(speed_kmh: float, nitro: float, lap: String, time: String, info: String, power := "") -> void:
+	power_label.text = "" if power == "" else "%s  [SHIFT]" % power.to_upper()
+	power_label.modulate = Powers.COLORS.get(power, Color.WHITE)
 	speed_label.text = "%d km/h" % speed_kmh
 	nitro_bar.value = nitro
 	lap_label.text = lap

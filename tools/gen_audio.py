@@ -87,6 +87,47 @@ def fanfare():
     return lowpass(s, 0.35)
 
 
+def pickup():
+    # Bright two-note chime.
+    s = []
+    for i in range(int(RATE * 0.35)):
+        t = i / RATE
+        f = note(84) if t < 0.08 else note(91)
+        s.append((math.sin(2 * math.pi * f * t) + square(f, t) * 0.3) * math.exp(-6 * t))
+    return s
+
+
+def fire():
+    # Rising roar: noise through an opening filter plus a falling tone.
+    s, y = [], 0.0
+    for i in range(int(RATE * 0.6)):
+        t = i / RATE
+        y += (0.05 + 0.4 * t) * (random.uniform(-1, 1) - y)
+        s.append(y * 1.5 + math.sin(2 * math.pi * (300 - 250 * t) * t) * 0.4 * math.exp(-4 * t))
+    return s
+
+
+def boom():
+    # Explosion: low thump plus decaying rumble noise.
+    s, y = [], 0.0
+    for i in range(int(RATE * 1.2)):
+        t = i / RATE
+        y += 0.06 * (random.uniform(-1, 1) - y)
+        thump = math.sin(2 * math.pi * (40 + 80 * math.exp(-20 * t)) * t) * math.exp(-6 * t)
+        s.append((thump + y * 3.0) * math.exp(-3 * t))
+    return s
+
+
+def speed():
+    # Rising sci-fi sweep.
+    s, ph = [], 0.0
+    for i in range(int(RATE * 0.7)):
+        t = i / RATE
+        ph += 2 * math.pi * (200 + 1400 * t) / RATE
+        s.append((math.sin(ph) + 0.4 * (1 if math.sin(ph * 2) > 0 else -1)) * min(1, t * 20) * math.exp(-2 * t))
+    return s
+
+
 def music():
     # 8 bars of driving rock-ish chiptune at 128 bpm, loops cleanly.
     bpm = 128
@@ -123,6 +164,7 @@ def music():
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    for name, fn in [("engine.wav", engine), ("nitro.wav", nitro), ("skid.wav", skid), ("finish.wav", fanfare), ("music.wav", music)]:
+    for name, fn in [("engine.wav", engine), ("nitro.wav", nitro), ("skid.wav", skid), ("finish.wav", fanfare), ("music.wav", music),
+                     ("pickup.wav", pickup), ("fire.wav", fire), ("boom.wav", boom), ("speed.wav", speed)]:
         write(name, fn())
         print("wrote audio/" + name)

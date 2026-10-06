@@ -31,6 +31,18 @@ default_font_size = 26
 Label/colors/font_outline_color = Color(0, 0, 0, 1)
 Label/constants/outline_size = 8
 
+[sub_resource type="StyleBoxFlat" id="power_pad"]
+bg_color = Color(1, 0.75, 0.1, 0.35)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.85, 0.3, 0.9)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
 [node name="TouchControls" type="CanvasLayer"]
 layer = 2
 script = ExtResource("1")
@@ -182,5 +194,27 @@ offset_top = 0
 offset_right = 0
 offset_bottom = 0
 text = "NITRO"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="use_power" type="Panel" parent="Pads"]
+layout_mode = 1
+anchor_left = 1
+anchor_top = 1
+anchor_right = 1
+anchor_bottom = 1
+offset_left = -200
+offset_top = -410
+offset_right = -30
+offset_bottom = -295
+modulate = Color(1, 1, 1, 0.55)
+mouse_filter = 2
+theme_override_styles/panel = SubResource("power_pad")
+
+[node name="Label" type="Label" parent="Pads/use_power"]
+layout_mode = 1
+anchor_right = 1
+anchor_bottom = 1
+text = "POWER"
 horizontal_alignment = 1
 vertical_alignment = 1

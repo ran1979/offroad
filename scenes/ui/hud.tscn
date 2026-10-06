@@ -95,6 +95,19 @@ theme_override_font_sizes/font_size = 40
 text = "0 km/h"
 horizontal_alignment = 1
 
+[node name="Power" type="Label" parent="Root"]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 1
+anchor_right = 0.5
+anchor_bottom = 1
+offset_left = -250
+offset_top = -160
+offset_right = 250
+offset_bottom = -115
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+
 [node name="Nitro" type="ProgressBar" parent="Root"]
 layout_mode = 1
 anchor_left = 0.5
