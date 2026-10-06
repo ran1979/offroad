@@ -1,0 +1,94 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="metal"]
+albedo_color = Color(0.12, 0.12, 0.13, 1)
+metallic = 0.7
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="glass"]
+albedo_color = Color(0.05, 0.08, 0.12, 1)
+metallic = 0.8
+roughness = 0.1
+
+[sub_resource type="StandardMaterial3D" id="light"]
+albedo_color = Color(1, 0.9, 0.5, 1)
+emission_enabled = true
+emission = Color(1, 0.85, 0.4, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="StandardMaterial3D" id="rubber"]
+albedo_color = Color(0.08, 0.08, 0.08, 1)
+
+[sub_resource type="BoxMesh" id="m0"]
+size = Vector3(2.0, 0.6, 4.0)
+
+[sub_resource type="BoxMesh" id="m1"]
+size = Vector3(1.8, 0.65, 1.7)
+
+[sub_resource type="BoxMesh" id="m2"]
+size = Vector3(1.7, 0.5, 0.05)
+
+[sub_resource type="BoxMesh" id="m3"]
+size = Vector3(1.8, 0.1, 1.5)
+
+[sub_resource type="CylinderMesh" id="m4"]
+top_radius = 0.4
+bottom_radius = 0.4
+height = 0.3
+
+[sub_resource type="BoxMesh" id="m5"]
+size = Vector3(1.6, 0.12, 0.15)
+
+[sub_resource type="BoxMesh" id="m6"]
+size = Vector3(2.0, 0.25, 0.25)
+
+[sub_resource type="BoxMesh" id="m7"]
+size = Vector3(0.3, 0.15, 0.05)
+
+[sub_resource type="BoxMesh" id="m8"]
+size = Vector3(0.3, 0.15, 0.05)
+
+[node name="TrophyTruck" type="Node3D"]
+
+[node name="PaintBody" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+mesh = SubResource("m0")
+
+[node name="PaintCab" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.37, 0.1)
+mesh = SubResource("m1")
+
+[node name="Windshield" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0.96)
+mesh = SubResource("m2")
+material_override = SubResource("glass")
+
+[node name="Bed" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.08, -1.2)
+mesh = SubResource("m3")
+material_override = SubResource("metal")
+
+[node name="Spare" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, -1.2)
+mesh = SubResource("m4")
+material_override = SubResource("rubber")
+
+[node name="LightBar" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.76, 0.6)
+mesh = SubResource("m5")
+material_override = SubResource("light")
+
+[node name="Bumper" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 2.05)
+mesh = SubResource("m6")
+material_override = SubResource("metal")
+
+[node name="LightL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 0.85, 2.01)
+mesh = SubResource("m7")
+material_override = SubResource("light")
+
+[node name="LightR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 0.85, 2.01)
+mesh = SubResource("m8")
+material_override = SubResource("light")

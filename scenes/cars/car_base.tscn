@@ -1,0 +1,171 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/car_base.gd" id="1"]
+
+[sub_resource type="BoxShape3D" id="chassis"]
+size = Vector3(1.8, 0.6, 3.6)
+
+[sub_resource type="StandardMaterial3D" id="rubber"]
+albedo_color = Color(0.08, 0.08, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="tire"]
+material = SubResource("rubber")
+top_radius = 0.42
+bottom_radius = 0.42
+height = 0.35
+radial_segments = 16
+
+[sub_resource type="Gradient" id="soft"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="soft_tex"]
+gradient = SubResource("soft")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="dust_mat"]
+albedo_texture = SubResource("soft_tex")
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+billboard_keep_scale = true
+
+[sub_resource type="QuadMesh" id="dust_quad"]
+material = SubResource("dust_mat")
+size = Vector2(0.7, 0.7)
+
+[sub_resource type="Gradient" id="dust_ramp"]
+colors = PackedColorArray(0.6, 0.47, 0.32, 0.8, 0.6, 0.47, 0.32, 0)
+
+[sub_resource type="StandardMaterial3D" id="flame_mat"]
+albedo_texture = SubResource("soft_tex")
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+billboard_keep_scale = true
+
+[sub_resource type="QuadMesh" id="flame_quad"]
+material = SubResource("flame_mat")
+size = Vector2(0.4, 0.4)
+
+[sub_resource type="Gradient" id="flame_ramp"]
+offsets = PackedFloat32Array(0, 0.4, 1)
+colors = PackedColorArray(0.6, 0.85, 1, 1, 1, 0.5, 0.1, 0.9, 1, 0.2, 0, 0)
+
+[node name="Car" type="VehicleBody3D"]
+mass = 150.0
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, -0.2, 0)
+script = ExtResource("1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+shape = SubResource("chassis")
+
+[node name="Body" type="Node3D" parent="."]
+
+[node name="WheelFL" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, 0.4, 1.3)
+use_as_traction = true
+use_as_steering = true
+wheel_roll_influence = 0.15
+wheel_radius = 0.42
+wheel_rest_length = 0.4
+suspension_travel = 0.4
+suspension_max_force = 12000.0
+
+[node name="Tire" type="MeshInstance3D" parent="WheelFL"]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tire")
+
+[node name="WheelFR" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, 0.4, 1.3)
+use_as_traction = true
+use_as_steering = true
+wheel_roll_influence = 0.15
+wheel_radius = 0.42
+wheel_rest_length = 0.4
+suspension_travel = 0.4
+suspension_max_force = 12000.0
+
+[node name="Tire" type="MeshInstance3D" parent="WheelFR"]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tire")
+
+[node name="WheelRL" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, 0.4, -1.3)
+use_as_traction = true
+use_as_steering = false
+wheel_roll_influence = 0.15
+wheel_radius = 0.42
+wheel_rest_length = 0.4
+suspension_travel = 0.4
+suspension_max_force = 12000.0
+
+[node name="Tire" type="MeshInstance3D" parent="WheelRL"]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tire")
+
+[node name="WheelRR" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, 0.4, -1.3)
+use_as_traction = true
+use_as_steering = false
+wheel_roll_influence = 0.15
+wheel_radius = 0.42
+wheel_rest_length = 0.4
+suspension_travel = 0.4
+suspension_max_force = 12000.0
+
+[node name="Tire" type="MeshInstance3D" parent="WheelRR"]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tire")
+
+[node name="DustL" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, 0.1, -1.4)
+emitting = false
+amount = 32
+lifetime = 1.0
+mesh = SubResource("dust_quad")
+direction = Vector3(0, 0.6, -1)
+spread = 25.0
+gravity = Vector3(0, 0.5, 0)
+initial_velocity_min = 1.5
+initial_velocity_max = 3.5
+scale_amount_min = 1.0
+scale_amount_max = 3.0
+color_ramp = SubResource("dust_ramp")
+
+[node name="DustR" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, 0.1, -1.4)
+emitting = false
+amount = 32
+lifetime = 1.0
+mesh = SubResource("dust_quad")
+direction = Vector3(0, 0.6, -1)
+spread = 25.0
+gravity = Vector3(0, 0.5, 0)
+initial_velocity_min = 1.5
+initial_velocity_max = 3.5
+scale_amount_min = 1.0
+scale_amount_max = 3.0
+color_ramp = SubResource("dust_ramp")
+
+[node name="NitroFlame" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, -1.9)
+emitting = false
+amount = 40
+lifetime = 0.35
+mesh = SubResource("flame_quad")
+direction = Vector3(0, 0, -1)
+spread = 25.0
+gravity = Vector3(0, 0.5, 0)
+initial_velocity_min = 6.0
+initial_velocity_max = 9.0
+scale_amount_min = 0.8
+scale_amount_max = 1.6
+color_ramp = SubResource("flame_ramp")

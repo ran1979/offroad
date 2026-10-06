@@ -1,0 +1,184 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/touch_controls.gd" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="pad"]
+bg_color = Color(1, 1, 1, 0.22)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 0.7)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="nitro_pad"]
+bg_color = Color(0.1, 0.6, 1, 0.35)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.5, 0.85, 1, 0.9)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
+[sub_resource type="Theme" id="theme"]
+default_font_size = 26
+Label/colors/font_outline_color = Color(0, 0, 0, 1)
+Label/constants/outline_size = 8
+
+[node name="TouchControls" type="CanvasLayer"]
+layer = 2
+script = ExtResource("1")
+
+[node name="Pads" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme = SubResource("theme")
+
+[node name="steer_left" type="Panel" parent="Pads"]
+layout_mode = 1
+anchor_left = 0
+anchor_top = 1
+anchor_right = 0
+anchor_bottom = 1
+offset_left = 30
+offset_top = -210
+offset_right = 200
+offset_bottom = -30
+modulate = Color(1, 1, 1, 0.55)
+mouse_filter = 2
+theme_override_styles/panel = SubResource("pad")
+
+[node name="Label" type="Label" parent="Pads/steer_left"]
+layout_mode = 1
+anchor_left = 0
+anchor_top = 0
+anchor_right = 1
+anchor_bottom = 1
+offset_left = 0
+offset_top = 0
+offset_right = 0
+offset_bottom = 0
+text = "◀"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="steer_right" type="Panel" parent="Pads"]
+layout_mode = 1
+anchor_left = 0
+anchor_top = 1
+anchor_right = 0
+anchor_bottom = 1
+offset_left = 220
+offset_top = -210
+offset_right = 390
+offset_bottom = -30
+modulate = Color(1, 1, 1, 0.55)
+mouse_filter = 2
+theme_override_styles/panel = SubResource("pad")
+
+[node name="Label" type="Label" parent="Pads/steer_right"]
+layout_mode = 1
+anchor_left = 0
+anchor_top = 0
+anchor_right = 1
+anchor_bottom = 1
+offset_left = 0
+offset_top = 0
+offset_right = 0
+offset_bottom = 0
+text = "▶"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="accelerate" type="Panel" parent="Pads"]
+layout_mode = 1
+anchor_left = 1
+anchor_top = 1
+anchor_right = 1
+anchor_bottom = 1
+offset_left = -200
+offset_top = -280
+offset_right = -30
+offset_bottom = -30
+modulate = Color(1, 1, 1, 0.55)
+mouse_filter = 2
+theme_override_styles/panel = SubResource("pad")
+
+[node name="Label" type="Label" parent="Pads/accelerate"]
+layout_mode = 1
+anchor_left = 0
+anchor_top = 0
+anchor_right = 1
+anchor_bottom = 1
+offset_left = 0
+offset_top = 0
+offset_right = 0
+offset_bottom = 0
+text = "GAS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="brake" type="Panel" parent="Pads"]
+layout_mode = 1
+anchor_left = 1
+anchor_top = 1
+anchor_right = 1
+anchor_bottom = 1
+offset_left = -380
+offset_top = -190
+offset_right = -220
+offset_bottom = -30
+modulate = Color(1, 1, 1, 0.55)
+mouse_filter = 2
+theme_override_styles/panel = SubResource("pad")
+
+[node name="Label" type="Label" parent="Pads/brake"]
+layout_mode = 1
+anchor_left = 0
+anchor_top = 0
+anchor_right = 1
+anchor_bottom = 1
+offset_left = 0
+offset_top = 0
+offset_right = 0
+offset_bottom = 0
+text = "BRAKE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="nitro" type="Panel" parent="Pads"]
+layout_mode = 1
+anchor_left = 1
+anchor_top = 1
+anchor_right = 1
+anchor_bottom = 1
+offset_left = -380
+offset_top = -330
+offset_right = -220
+offset_bottom = -210
+modulate = Color(1, 1, 1, 0.55)
+mouse_filter = 2
+theme_override_styles/panel = SubResource("nitro_pad")
+
+[node name="Label" type="Label" parent="Pads/nitro"]
+layout_mode = 1
+anchor_left = 0
+anchor_top = 0
+anchor_right = 1
+anchor_bottom = 1
+offset_left = 0
+offset_top = 0
+offset_right = 0
+offset_bottom = 0
+text = "NITRO"
+horizontal_alignment = 1
+vertical_alignment = 1
