@@ -30,6 +30,8 @@ func _physics_process(_d: float) -> void:
 	if frame == 60 * 9:
 		if p.linear_velocity.length() * 3.6 < 60.0:
 			_fail("player too slow")
+		if not p.engine_sound.playing or p.engine_sound.pitch_scale < 1.2:
+			_fail("engine sound not revving")
 		Input.action_release("accelerate")
 	if frame == 60 * 60:
 		for c in rm.cars.slice(1):
@@ -45,6 +47,8 @@ func _physics_process(_d: float) -> void:
 		rm.on_checkpoint(p, 0)
 		if not (p.finished and rm.hud.results.visible):
 			_fail("race did not finish")
+		if not rm.hud.get_node("FinishSound").playing:
+			_fail("no finish sound")
 		print(rm.hud.get_node("Root/Results/VBox/Stats").text)
 		print("AI passed: ", rm.cars.slice(1).map(func(c): return c.passed))
 		print("SMOKE OK")

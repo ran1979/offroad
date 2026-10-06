@@ -51,7 +51,9 @@ func center_text(text: String) -> void:
 	center_label.text = text
 
 
-func show_results(title: String, lines: String) -> void:
+func show_results(title: String, lines: String, success := true) -> void:
+	$FinishSound.pitch_scale = 1.0 if success else 0.7  # lower, sadder jingle for TIME UP
+	$FinishSound.play()
 	$Root/Results/VBox/Title.text = title
 	$Root/Results/VBox/Stats.text = lines
 	results.show()

@@ -133,7 +133,7 @@ func _end(title: String) -> void:
 		lines += "\nFinal rank: " + ["1st", "2nd", "3rd", "4th"][position_of(player) - 1]
 	if best_lap < INF:
 		lines += "\nBest lap: " + fmt_time(best_lap)
-	hud.show_results(title, lines)
+	hud.show_results(title, lines, player.finished)
 
 
 static func fmt_time(t: float) -> String:

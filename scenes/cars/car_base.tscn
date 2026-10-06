@@ -1,6 +1,9 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/car_base.gd" id="1"]
+[ext_resource type="AudioStream" path="res://audio/engine.wav" id="2"]
+[ext_resource type="AudioStream" path="res://audio/nitro.wav" id="3"]
+[ext_resource type="AudioStream" path="res://audio/skid.wav" id="4"]
 
 [sub_resource type="BoxShape3D" id="chassis"]
 size = Vector3(1.8, 0.6, 3.6)
@@ -169,3 +172,18 @@ initial_velocity_max = 9.0
 scale_amount_min = 0.8
 scale_amount_max = 1.6
 color_ramp = SubResource("flame_ramp")
+
+[node name="EngineSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2")
+volume_db = -8.0
+unit_size = 8.0
+
+[node name="NitroSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3")
+volume_db = -4.0
+unit_size = 8.0
+
+[node name="SkidSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4")
+volume_db = -10.0
+unit_size = 8.0

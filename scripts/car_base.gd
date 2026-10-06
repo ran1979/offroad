@@ -34,6 +34,9 @@ var _stuck_time := 0.0
 @onready var wheels := find_children("*", "VehicleWheel3D")
 @onready var dust := [$DustL, $DustR]
 @onready var flame: CPUParticles3D = $NitroFlame
+@onready var engine_sound: AudioStreamPlayer3D = $EngineSound
+@onready var nitro_sound: AudioStreamPlayer3D = $NitroSound
+@onready var skid_sound: AudioStreamPlayer3D = $SkidSound
 
 
 func _ready() -> void:
@@ -42,6 +45,8 @@ func _ready() -> void:
 		w.damping_compression = suspension_damping
 		w.damping_relaxation = suspension_damping * 1.3
 		w.wheel_friction_slip = friction_slip * (1.0 if w.use_as_steering else 0.9)
+	if not freeze:  # showroom cars stay silent
+		engine_sound.play()
 
 
 func apply_data(d: CarData, tint := d.color) -> void:
@@ -107,11 +112,22 @@ func _physics_process(delta: float) -> void:
 	for d in dust:
 		d.emitting = dusty
 
+	# Audio: engine pitch follows speed and revs up on gas; loops toggle with nitro / braking / drifting.
+	engine_sound.pitch_scale = 0.6 + clampf(absf(fwd_speed) / top_speed, 0.0, 1.5) * 1.2 + throttle_input * 0.2
+	engine_sound.volume_db = -14.0 + throttle_input * 8.0
+	_set_loop(nitro_sound, boosting)
+	_set_loop(skid_sound, grounded and ((brake_input > 0.0 and fwd_speed > 5.0) or drift > 6.0))
+
 	# Auto-respawn when flipped, fallen off, or wedged against something.
 	var stuck := global_basis.y.y < 0.3 or global_position.y < -10.0 or (speed < 0.5 and (throttle_input > 0.0 or brake_input > 0.0))
 	_stuck_time = _stuck_time + delta if controls_enabled and stuck else 0.0
 	if _stuck_time > 3.0:
 		respawn()
+
+
+func _set_loop(player: AudioStreamPlayer3D, on: bool) -> void:
+	if player.playing != on:
+		player.playing = on
 
 
 func respawn() -> void:

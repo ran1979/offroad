@@ -62,6 +62,16 @@ The touch pads also respond to the mouse, so you can try them on desktop.
 | Dune Buggy | high | medium | high |
 | Trophy Truck | medium | high | low |
 
+### Sound
+
+- **Music** loops in the background. It is played from the `Global` autoload, so it continues between the menu and the race.
+- **Engine** pitch rises with speed and jumps when you press gas.
+- **Nitro** makes a turbo whoosh while it's active.
+- **Tyres** squeal when you brake hard or drift.
+- **Fanfare** plays when you finish. If time runs out, it plays at a lower pitch.
+
+All sounds are synthesized by `tools/gen_audio.py` using only the Python standard library. Rerun `python3 tools/gen_audio.py` to regenerate them. Looping is turned on in each sound's `audio/*.wav.import` file (`edit/loop_mode=2`).
+
 ## Engine and architecture
 
 The game uses Godot's built-in physics: `VehicleBody3D` with four driven `VehicleWheel3D` raycast wheels. The track geometry is generated in code from a list of waypoints, so editing the layout means changing a single array.

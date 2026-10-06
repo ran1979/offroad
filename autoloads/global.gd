@@ -14,6 +14,15 @@ var selected_car := 0
 var mode := Mode.AI_RACE
 
 
+# Music lives in the autoload so it keeps playing across scene changes.
+func _ready() -> void:
+	var music := AudioStreamPlayer.new()
+	music.stream = preload("res://audio/music.wav")
+	music.volume_db = -12.0
+	add_child(music)
+	music.play()
+
+
 func get_car() -> CarData:
 	return cars[selected_car]
 
