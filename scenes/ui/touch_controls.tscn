@@ -67,7 +67,8 @@ offset_left = 0
 offset_top = 0
 offset_right = 0
 offset_bottom = 0
-text = "◀"
+text = "<"
+theme_override_font_sizes/font_size = 56
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -95,7 +96,8 @@ offset_left = 0
 offset_top = 0
 offset_right = 0
 offset_bottom = 0
-text = "▶"
+text = ">"
+theme_override_font_sizes/font_size = 56
 horizontal_alignment = 1
 vertical_alignment = 1
 
