@@ -1,5 +1,7 @@
 # Offroads
 
+**Play in the browser: <https://ran1979.github.io/offroad/>**
+
 A 3D off-road racing prototype built with **Godot 4** (GDScript), targeting Android phones and playable on desktop.
 
 Pick a car in the showroom, choose **Time Trial** or **AI Race**, and race 3 laps around a dirt circuit with jump ramps, nitro boosts and mid-air control.
@@ -17,6 +19,8 @@ Pick a car in the showroom, choose **Time Trial** or **AI Race**, and race 3 lap
 ./run.sh race     # skip the menu, go straight to the track
 ./run.sh test     # headless smoke test
 ./run.sh editor   # open the project in the Godot editor
+./run.sh web      # export the web build to build/web
+./run.sh deploy   # export and publish to GitHub Pages (gh-pages branch)
 ```
 
 `run.sh` looks for `godot`, then `godot4` on your `PATH`, then `/Applications/Godot.app`. To use a different binary, set `GODOT=/path/to/godot ./run.sh`.
@@ -121,6 +125,10 @@ This runs an AI race at a fixed 60 fps with no window and checks that:
 - the final lap brings up the results screen.
 
 It prints `SMOKE OK` on success, or `SMOKE FAIL: ...` and exits with code 1.
+
+## Web build (GitHub Pages)
+
+`./run.sh deploy` exports the **Web** preset and force-pushes the result to the `gh-pages` branch, which GitHub Pages serves at <https://ran1979.github.io/offroad/>. It needs the Godot web export templates installed. The preset has thread support turned off because GitHub Pages can't send the COOP/COEP headers that threaded builds need. In the browser, Godot uses the Compatibility (WebGL 2) renderer.
 
 ## Android export
 

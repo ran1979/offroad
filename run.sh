@@ -4,6 +4,8 @@
 #   ./run.sh race     jump straight into the track
 #   ./run.sh test     headless smoke test
 #   ./run.sh editor   open in the Godot editor
+#   ./run.sh web      export the web build to build/web
+#   ./run.sh deploy   export web build and publish it to GitHub Pages (gh-pages branch)
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -18,5 +20,15 @@ case "${1:-play}" in
   race)   exec "$GODOT" --path . res://scenes/tracks/offroad_track.tscn ;;
   test)   exec "$GODOT" --headless --path . --fixed-fps 60 res://tests/smoke_test.tscn ;;
   editor) exec "$GODOT" --path . --editor ;;
-  *)      sed -n '2,6p' "$0"; exit 1 ;;
+  web|deploy)
+    rm -rf build/web && mkdir -p build/web
+    "$GODOT" --headless --path . --export-release Web build/web/index.html
+    if [ "$1" = deploy ]; then
+      remote="$(git remote get-url origin)"
+      cd build/web && touch .nojekyll
+      git init -q -b gh-pages && git add -A
+      git -c commit.gpgsign=false commit -q -m "Deploy web build"
+      git push -f "$remote" gh-pages  # ponytail: force-push, gh-pages holds only the latest build
+    fi ;;
+  *)      sed -n '2,8p' "$0"; exit 1 ;;
 esac
