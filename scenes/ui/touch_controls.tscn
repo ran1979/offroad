@@ -218,3 +218,24 @@ anchor_bottom = 1
 text = "POWER"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="reset_car" type="Panel" parent="Pads"]
+layout_mode = 1
+anchor_left = 1
+anchor_right = 1
+offset_left = -164
+offset_top = 180
+offset_right = -24
+offset_bottom = 240
+modulate = Color(1, 1, 1, 0.55)
+mouse_filter = 2
+theme_override_styles/panel = SubResource("pad")
+
+[node name="Label" type="Label" parent="Pads/reset_car"]
+layout_mode = 1
+anchor_right = 1
+anchor_bottom = 1
+theme_override_font_sizes/font_size = 22
+text = "RESET"
+horizontal_alignment = 1
+vertical_alignment = 1

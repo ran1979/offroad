@@ -38,6 +38,12 @@ func _physics_process(_d: float) -> void:
 		p._use_power()
 		if not rm.cars.slice(1).any(func(c): return c._stun_time > 0.0):
 			_fail("boom hit nobody")
+	if frame == 60 * 10:  # manual reset puts the player back at its last checkpoint
+		Input.action_press("reset_car")
+	if frame == 60 * 10 + 2:
+		Input.action_release("reset_car")
+		if p.global_position.distance_to(p.respawn_transform.origin) > 2.0:
+			_fail("reset_car did not respawn the player")
 	if frame == 60 * 9:
 		if peak_kmh < 60.0:
 			_fail("player too slow")

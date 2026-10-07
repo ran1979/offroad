@@ -45,6 +45,7 @@ You can also open `project.godot` in the Godot editor and press **F5**.
 | Brake / Reverse | ↓ / S | BRAKE |
 | Nitro | Space | NITRO |
 | Use power-up | Shift / E | POWER |
+| Reset car | R | RESET (under the minimap) |
 | Back to menu | Esc | Android back button |
 
 The touch pads also respond to the mouse, so you can try them on desktop.
@@ -54,7 +55,8 @@ The touch pads also respond to the mouse, so you can try them on desktop.
 - **Nitro** gives 1.5× power and top speed while held, and drains the blue bar. It refills when you drive fast or drift.
 - **In the air**, gas tips the nose down, brake lifts it, and steering rolls the car, so you can line up your landings.
 - **Checkpoints** sit at every corner and must be hit in order, so shortcuts don't count.
-- **Auto-reset**: if you flip, get stuck, or leave the track for a couple of seconds, you respawn at your last checkpoint.
+- **Stuck?** Press **R**, or tap RESET under the minimap, to put your car back at your last checkpoint, facing the right way.
+- **Auto-reset**: if you flip, get stuck, or leave the track for a couple of seconds, you respawn at your last checkpoint without pressing anything.
 
 ### Power-ups
 
@@ -118,7 +120,7 @@ tests/smoke_test.tscn            Headless smoke test
 - Renderer: **Mobile**
 - Base resolution 1280×720, stretch mode `canvas_items` with aspect `expand`, so wide phones (19.5:9 and similar) get extra width while the UI stays anchored to the corners
 - Orientation: sensor landscape
-- Input actions: `steer_left`, `steer_right`, `accelerate`, `brake`, `nitro`, `use_power`
+- Input actions: `steer_left`, `steer_right`, `accelerate`, `brake`, `nitro`, `use_power`, `reset_car`
 
 ### Tuning
 
@@ -147,6 +149,7 @@ tests/smoke_test.tscn            Headless smoke test
 This runs an AI race at a fixed 60 fps with no window and checks that:
 
 - the player car passes 60 km/h when holding gas;
+- pressing reset puts the player back at its last checkpoint;
 - a BOOM fired at the start knocks at least one other car;
 - every AI car completes a lap within 60 seconds and uses at least one power-up;
 - a checkpoint hit out of order is ignored;

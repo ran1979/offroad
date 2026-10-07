@@ -83,6 +83,8 @@ func _physics_process(delta: float) -> void:
 		brake_input = Input.get_action_strength("brake")
 		nitro_input = Input.is_action_pressed("nitro")
 		power_input = Input.is_action_just_pressed("use_power")
+		if controls_enabled and Input.is_action_just_pressed("reset_car"):
+			respawn()  # manual unstick: back to the last checkpoint
 	if controls_enabled and power_input and power != "":
 		_use_power()
 	_boost_time = maxf(_boost_time - delta, 0.0)
